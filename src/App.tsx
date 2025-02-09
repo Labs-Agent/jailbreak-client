@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { LineChart, PieChart } from '@mui/x-charts';
 import { 
-
   Memory, 
   Storage, 
   Speed, 
@@ -28,6 +27,7 @@ import {
   CloudDone
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { usePrivy } from '@privy-io/react-auth';
 import './App.css';
 
 interface SystemMetrics {
@@ -327,6 +327,7 @@ const Navbar = () => (
 
 
 function App() {
+  const { login, ready, authenticated } = usePrivy();
   const [metrics, setMetrics] = useState<SystemMetrics>({
     cpu: 0,
     used_memory: 0,
@@ -360,6 +361,112 @@ function App() {
     { value: metrics.total_swap - metrics.used_swap, label: 'Available Swap' },
   ];
 
+  // If wallet is not connected, show connect wallet page
+  if (!authenticated) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            width: '100%',
+            bgcolor: 'background.default',
+            background: 'linear-gradient(to bottom right, #1e293b, #0f172a)',
+            color: 'text.primary',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Paper
+              sx={{
+                p: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 3,
+                maxWidth: 400,
+                mx: 'auto',
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: 4,
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <Terminal sx={{ fontSize: 48, color: '#60a5fa' }} />
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                  background: 'linear-gradient(45deg, #60a5fa, #818cf8)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textAlign: 'center',
+                }}
+              >
+                Welcome to Bot-Man
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: '#94a3b8',
+                  textAlign: 'center',
+                  maxWidth: 300,
+                  mb: 2,
+                }}
+              >
+                Connect your wallet to access real-time system metrics and performance analytics
+              </Typography>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Box
+                  onClick={login}
+                  sx={{
+                    py: 2,
+                    px: 4,
+                    background: 'linear-gradient(45deg, #3b82f6, #6366f1)',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      filter: 'brightness(1.1)',
+                    },
+                  }}
+                >
+                  <Typography
+                    variant="button"
+                    sx={{
+                      color: 'white',
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                    }}
+                  >
+                    Connect Wallet
+                  </Typography>
+                </Box>
+              </motion.div>
+            </Paper>
+          </motion.div>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  // If wallet is connected, show the main dashboard
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
