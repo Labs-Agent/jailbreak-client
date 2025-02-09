@@ -327,7 +327,7 @@ const Navbar = () => (
 
 
 function App() {
-  const { login, ready, authenticated } = usePrivy();
+  const { login, authenticated } = usePrivy();
   const [metrics, setMetrics] = useState<SystemMetrics>({
     cpu: 0,
     used_memory: 0,
