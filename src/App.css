@@ -1,3 +1,9 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #f0f2f5 0%, #e3e6ec 100%);
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +45,28 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.MuiPaper-root {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.3s ease-in-out !important;
+}
+
+.MuiPaper-root:hover {
+  transform: translateY(-5px);
+}
+
+.MuiTypography-h4 {
+  background: linear-gradient(45deg, #2196f3, #3f51b5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700 !important;
+}
+
+.MuiTypography-h6 {
+  color: #1a237e !important;
+  font-weight: 600 !important;
 }
