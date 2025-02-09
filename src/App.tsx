@@ -5,13 +5,11 @@ import {
   Grid, 
   Paper, 
   Typography, 
-  useTheme, 
   ThemeProvider, 
   createTheme,
   AppBar,
   Toolbar,
   IconButton,
-  useMediaQuery,
   CssBaseline,
   Tooltip,
   Badge,
@@ -20,10 +18,7 @@ import {
 } from '@mui/material';
 import { LineChart, PieChart } from '@mui/x-charts';
 import { 
-  Brightness4, 
-  Brightness7, 
-  Menu, 
-  Close, 
+
   Memory, 
   Storage, 
   Speed, 
@@ -32,7 +27,7 @@ import {
   Terminal,
   CloudDone
 } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import './App.css';
 
 interface SystemMetrics {
@@ -46,7 +41,6 @@ interface SystemMetrics {
 }
 
 const MotionPaper = motion(Paper);
-const MotionBox = motion(Box);
 
 // Define animation variants before using them
 const containerVariants = {
@@ -330,38 +324,7 @@ const Navbar = () => (
   </AppBar>
 );
 
-// Update the LineChart component styling
-const chartTheme = {
-  background: {
-    color: 'transparent'
-  },
-  text: {
-    fill: '#475569'
-  },
-  axis: {
-    domain: {
-      line: {
-        stroke: '#cbd5e1',
-        strokeWidth: 1
-      }
-    },
-    tick: {
-      line: {
-        stroke: '#cbd5e1',
-        strokeWidth: 1
-      }
-    },
-    text: {
-      fill: '#475569'
-    }
-  },
-  grid: {
-    line: {
-      stroke: '#e2e8f0',
-      strokeWidth: 1
-    }
-  }
-};
+
 
 function App() {
   const [metrics, setMetrics] = useState<SystemMetrics>({
