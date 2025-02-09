@@ -13,7 +13,6 @@ import {
   CssBaseline,
   Tooltip,
   Badge,
-  Avatar,
   Chip,
 } from '@mui/material';
 import { LineChart, PieChart } from '@mui/x-charts';
@@ -27,6 +26,7 @@ import {
   CloudDone
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import logoImage from './assets/image.png';
 import { usePrivy } from '@privy-io/react-auth';
 import './App.css';
 
@@ -300,15 +300,15 @@ const Navbar = () => (
           </IconButton>
         </Tooltip>
 
-        <Avatar 
-          sx={{ 
-            width: 35,
-            height: 35,
-            fontSize: '0.9rem',
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))',
+        <Box
+          component="img"
+          src={logoImage}
+          alt="Logo"
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
             border: '2px solid rgba(255, 255, 255, 0.2)',
-            color: 'white',
             cursor: 'pointer',
             transition: 'all 0.2s ease-in-out',
             '&:hover': {
@@ -316,9 +316,7 @@ const Navbar = () => (
               border: '2px solid rgba(255, 255, 255, 0.3)',
             },
           }}
-        >
-          AI
-        </Avatar>
+        />
       </Box>
     </Toolbar>
   </AppBar>
@@ -332,24 +330,57 @@ function App() {
     cpu: 0,
     used_memory: 0,
     available_memory: 0,
-    core_count: 0,
-    total_memory: 0,
-    total_swap: 0,
+    core_count: 16,
+    total_memory: 32768,
+    total_swap: 8192,
     used_swap: 0,
   });
 
+  // Function to generate realistic fluctuating metrics
+  const generateRealisticMetrics = () => {
+    // CPU usage fluctuates between 20-80% with occasional spikes
+    const newCpu = Math.min(100, Math.max(20, 
+      metrics.cpu + (Math.random() * 10 - 5) + // Normal fluctuation
+      (Math.random() > 0.95 ? 15 : 0)  // Occasional spike
+    ));
+
+    // Memory usage gradually changes with system load
+    const baseMemoryUsage = 6144; // Base memory usage (6GB)
+    const activityMemory = Math.floor(Math.random() * 4096); // Activity-based fluctuation (0-4GB)
+    const newUsedMemory = baseMemoryUsage + activityMemory;
+    
+    // Available memory is inversely proportional to used memory
+    const newAvailableMemory = metrics.total_memory - newUsedMemory;
+
+    // Swap usage increases when memory is high
+    const swapThreshold = metrics.total_memory * 0.8;
+    const newUsedSwap = newUsedMemory > swapThreshold 
+      ? Math.floor((newUsedMemory - swapThreshold) * 0.5)
+      : Math.max(0, metrics.used_swap - 256); // Gradual swap release
+
+    setMetrics(prev => ({
+      ...prev,
+      cpu: Number(newCpu.toFixed(1)),
+      used_memory: newUsedMemory,
+      available_memory: newAvailableMemory,
+      used_swap: Math.min(newUsedSwap, metrics.total_swap),
+    }));
+  };
+
+  // Update metrics every 2 seconds
   useEffect(() => {
-    const mockData = {
-      cpu: 45,
-      used_memory: 8192,
-      available_memory: 16384,
-      core_count: 8,
-      total_memory: 32768,
-      total_swap: 4096,
-      used_swap: 1024,
-    };
-    setMetrics(mockData);
-  }, []);
+    if (authenticated) {
+      const interval = setInterval(generateRealisticMetrics, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [authenticated]);
+
+  // Initialize with first set of realistic metrics
+  useEffect(() => {
+    if (authenticated) {
+      generateRealisticMetrics();
+    }
+  }, [authenticated]);
 
   const memoryData = [
     { value: metrics.used_memory, label: 'Used Memory' },
